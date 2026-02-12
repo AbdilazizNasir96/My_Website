@@ -8,8 +8,15 @@ export default function LoadingScreen() {
   const [isLoading, setIsLoading] = useState(true);
   const [progress, setProgress] = useState(0);
   const [loadingText, setLoadingText] = useState('Initializing');
+  const [isMobile, setIsMobile] = useState(false);
 
   useEffect(() => {
+    // Detect mobile device
+    const checkMobile = () => {
+      setIsMobile(window.innerWidth < 768 || /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent));
+    };
+    checkMobile();
+
     const texts = ['Initializing', 'Loading Assets', 'Building Interface', 'Almost Ready', 'Finalizing'];
     let textIndex = 0;
 
@@ -23,18 +30,18 @@ export default function LoadingScreen() {
         if (prev >= 100) {
           clearInterval(interval);
           clearInterval(textInterval);
-          setTimeout(() => setIsLoading(false), 800);
+          setTimeout(() => setIsLoading(false), 500);
           return 100;
         }
-        return prev + 2;
+        return prev + 4; // Faster progress on mobile
       });
-    }, 50);
+    }, isMobile ? 30 : 50); // Faster intervals on mobile
 
     return () => {
       clearInterval(interval);
       clearInterval(textInterval);
     };
-  }, []);
+  }, [isMobile]);
 
   return (
     <AnimatePresence>
@@ -48,97 +55,83 @@ export default function LoadingScreen() {
             background: 'radial-gradient(circle at 50% 50%, #0a0a0a 0%, #000000 100%)',
           }}
         >
-          {/* Animated Grid Background */}
-          <motion.div
-            className="absolute inset-0 opacity-20"
-            style={{
-              backgroundImage: `
-                linear-gradient(rgba(0, 217, 255, 0.3) 1px, transparent 1px),
-                linear-gradient(90deg, rgba(168, 85, 247, 0.3) 1px, transparent 1px)
-              `,
-              backgroundSize: '50px 50px',
-            }}
-            animate={{
-              backgroundPosition: ['0px 0px', '50px 50px'],
-            }}
-            transition={{
-              duration: 2,
-              repeat: Infinity,
-              ease: 'linear',
-            }}
-          />
-
-          {/* Rotating Gradient Orbs */}
-          <div className="absolute inset-0 overflow-hidden">
-            {[...Array(12)].map((_, i) => (
+          {/* Simplified Background for Mobile */}
+          {!isMobile && (
+            <>
+              {/* Animated Grid Background */}
               <motion.div
-                key={i}
-                className="absolute rounded-full blur-3xl"
+                className="absolute inset-0 opacity-20"
                 style={{
-                  width: 200 + Math.random() * 300,
-                  height: 200 + Math.random() * 300,
-                  background: `radial-gradient(circle, ${
-                    [
-                      'rgba(0, 217, 255, 0.4)',
-                      'rgba(255, 107, 157, 0.4)',
-                      'rgba(168, 85, 247, 0.4)',
-                      'rgba(236, 72, 153, 0.4)',
-                      'rgba(245, 158, 11, 0.4)',
-                      'rgba(139, 92, 246, 0.4)',
-                    ][i % 6]
-                  }, transparent 70%)`,
-                  left: `${Math.random() * 100}%`,
-                  top: `${Math.random() * 100}%`,
+                  backgroundImage: `
+                    linear-gradient(rgba(0, 217, 255, 0.3) 1px, transparent 1px),
+                    linear-gradient(90deg, rgba(168, 85, 247, 0.3) 1px, transparent 1px)
+                  `,
+                  backgroundSize: '50px 50px',
                 }}
                 animate={{
-                  x: [0, Math.random() * 200 - 100, 0],
-                  y: [0, Math.random() * 200 - 100, 0],
-                  scale: [1, 1.5, 1],
-                  opacity: [0.3, 0.6, 0.3],
+                  backgroundPosition: ['0px 0px', '50px 50px'],
                 }}
                 transition={{
-                  duration: 8 + Math.random() * 4,
+                  duration: 2,
                   repeat: Infinity,
-                  ease: 'easeInOut',
-                  delay: i * 0.3,
+                  ease: 'linear',
                 }}
               />
-            ))}
-          </div>
 
-          {/* Floating Particles */}
-          <div className="absolute inset-0">
-            {[...Array(50)].map((_, i) => (
-              <motion.div
-                key={`particle-${i}`}
-                className="absolute w-1 h-1 bg-cyan-400 rounded-full"
+              {/* Rotating Gradient Orbs - Reduced for performance */}
+              <div className="absolute inset-0 overflow-hidden">
+                {[...Array(4)].map((_, i) => (
+                  <motion.div
+                    key={i}
+                    className="absolute rounded-full blur-2xl"
+                    style={{
+                      width: 250,
+                      height: 250,
+                      background: `radial-gradient(circle, ${
+                        [
+                          'rgba(0, 217, 255, 0.3)',
+                          'rgba(255, 107, 157, 0.3)',
+                          'rgba(168, 85, 247, 0.3)',
+                          'rgba(236, 72, 153, 0.3)',
+                        ][i]
+                      }, transparent 70%)`,
+                      left: `${25 + i * 25}%`,
+                      top: `${25 + (i % 2) * 50}%`,
+                    }}
+                    animate={{
+                      scale: [1, 1.3, 1],
+                      opacity: [0.3, 0.5, 0.3],
+                    }}
+                    transition={{
+                      duration: 6,
+                      repeat: Infinity,
+                      ease: 'easeInOut',
+                      delay: i * 0.5,
+                    }}
+                  />
+                ))}
+              </div>
+            </>
+          )}
+
+          {/* Mobile: Simple gradient background */}
+          {isMobile && (
+            <div className="absolute inset-0 overflow-hidden">
+              <div
+                className="absolute inset-0"
                 style={{
-                  left: `${Math.random() * 100}%`,
-                  top: `${Math.random() * 100}%`,
-                  filter: 'blur(1px)',
-                }}
-                animate={{
-                  y: [0, -100, 0],
-                  x: [0, Math.random() * 50 - 25, 0],
-                  opacity: [0, 1, 0],
-                  scale: [0, 1.5, 0],
-                }}
-                transition={{
-                  duration: 3 + Math.random() * 2,
-                  repeat: Infinity,
-                  delay: Math.random() * 3,
-                  ease: 'easeInOut',
+                  background: 'radial-gradient(circle at 30% 50%, rgba(0, 217, 255, 0.15), transparent 50%), radial-gradient(circle at 70% 50%, rgba(168, 85, 247, 0.15), transparent 50%)',
                 }}
               />
-            ))}
-          </div>
+            </div>
+          )}
 
-          {/* Rotating Ring */}
+          {/* Rotating Ring - Simplified for mobile */}
           <motion.div
             className="absolute"
             style={{
-              width: 400,
-              height: 400,
+              width: isMobile ? 250 : 400,
+              height: isMobile ? 250 : 400,
               border: '2px solid transparent',
               borderRadius: '50%',
               borderTopColor: '#00D9FF',
@@ -148,75 +141,79 @@ export default function LoadingScreen() {
               rotate: 360,
             }}
             transition={{
-              duration: 3,
+              duration: isMobile ? 4 : 3,
               repeat: Infinity,
               ease: 'linear',
             }}
           />
 
           {/* Inner Rotating Ring */}
-          <motion.div
-            className="absolute"
-            style={{
-              width: 300,
-              height: 300,
-              border: '2px solid transparent',
-              borderRadius: '50%',
-              borderBottomColor: '#FF6B9D',
-              borderLeftColor: '#FFD700',
-            }}
-            animate={{
-              rotate: -360,
-            }}
-            transition={{
-              duration: 2,
-              repeat: Infinity,
-              ease: 'linear',
-            }}
-          />
+          {!isMobile && (
+            <motion.div
+              className="absolute"
+              style={{
+                width: 300,
+                height: 300,
+                border: '2px solid transparent',
+                borderRadius: '50%',
+                borderBottomColor: '#FF6B9D',
+                borderLeftColor: '#FFD700',
+              }}
+              animate={{
+                rotate: -360,
+              }}
+              transition={{
+                duration: 2,
+                repeat: Infinity,
+                ease: 'linear',
+              }}
+            />
+          )}
 
           {/* Loading Content */}
           <div className="relative z-10 text-center px-4">
             {/* Animated Logo with 3D Effect */}
             <motion.div
-              initial={{ scale: 0, rotateY: -180 }}
+              initial={{ scale: 0, rotateY: isMobile ? 0 : -180 }}
               animate={{ scale: 1, rotateY: 0 }}
-              transition={{ duration: 1, type: 'spring', bounce: 0.4 }}
-              className="mb-12 relative"
+              transition={{ duration: isMobile ? 0.5 : 1, type: 'spring', bounce: 0.4 }}
+              className="mb-8 md:mb-12 relative"
             >
-              {/* Glow Effect Behind Logo */}
-              <motion.div
-                className="absolute inset-0 blur-3xl"
-                animate={{
-                  opacity: [0.5, 1, 0.5],
-                  scale: [0.8, 1.2, 0.8],
-                }}
-                transition={{
-                  duration: 2,
-                  repeat: Infinity,
-                }}
-                style={{
-                  background: 'radial-gradient(circle, rgba(0, 217, 255, 0.6), rgba(168, 85, 247, 0.6))',
-                }}
-              />
+              {/* Glow Effect Behind Logo - Simplified for mobile */}
+              {!isMobile && (
+                <motion.div
+                  className="absolute inset-0 blur-3xl"
+                  animate={{
+                    opacity: [0.5, 1, 0.5],
+                    scale: [0.8, 1.2, 0.8],
+                  }}
+                  transition={{
+                    duration: 2,
+                    repeat: Infinity,
+                  }}
+                  style={{
+                    background: 'radial-gradient(circle, rgba(0, 217, 255, 0.6), rgba(168, 85, 247, 0.6))',
+                  }}
+                />
+              )}
 
               {/* Main Logo */}
               <motion.div
                 className="relative"
-                animate={{
+                animate={!isMobile ? {
                   textShadow: [
                     '0 0 30px rgba(0, 217, 255, 1), 0 0 60px rgba(168, 85, 247, 0.8)',
                     '0 0 50px rgba(255, 107, 157, 1), 0 0 80px rgba(236, 72, 153, 0.8)',
                     '0 0 30px rgba(0, 217, 255, 1), 0 0 60px rgba(168, 85, 247, 0.8)',
                   ],
-                }}
+                } : {}}
                 transition={{
                   duration: 3,
                   repeat: Infinity,
                 }}
               >
                 <motion.h1
-                  className="text-9xl font-black bg-gradient-to-r from-cyan-400 via-purple-500 to-pink-500 bg-clip-text text-transparent"
+                  className="text-6xl md:text-9xl font-black bg-gradient-to-r from-cyan-400 via-purple-500 to-pink-500 bg-clip-text text-transparent"
                   style={{
                     backgroundSize: '200% 200%',
                   }}
@@ -233,8 +230,8 @@ export default function LoadingScreen() {
                 </motion.h1>
               </motion.div>
 
-              {/* Orbiting Icons */}
-              {[
+              {/* Orbiting Icons - Desktop only */}
+              {!isMobile && [
                 { Icon: Code, angle: 0, color: '#00D9FF' },
                 { Icon: Palette, angle: 90, color: '#FF6B9D' },
                 { Icon: Sparkles, angle: 180, color: '#A855F7' },
@@ -291,15 +288,15 @@ export default function LoadingScreen() {
             <motion.div
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 0.5 }}
-              className="mb-8"
+              transition={{ delay: 0.3 }}
+              className="mb-6 md:mb-8"
             >
               <motion.p
                 key={loadingText}
                 initial={{ opacity: 0, y: 10 }}
                 animate={{ opacity: 1, y: 0 }}
                 exit={{ opacity: 0, y: -10 }}
-                className="text-2xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 to-purple-500"
+                className="text-lg md:text-2xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 to-purple-500"
               >
                 {loadingText}
                 <motion.span
@@ -312,39 +309,43 @@ export default function LoadingScreen() {
             </motion.div>
 
             {/* Advanced Progress Bar */}
-            <div className="relative w-80 mx-auto mb-6">
-              {/* Glow Effect */}
-              <motion.div
-                className="absolute inset-0 blur-xl opacity-50"
-                animate={{
-                  opacity: [0.3, 0.6, 0.3],
-                }}
-                transition={{
-                  duration: 2,
-                  repeat: Infinity,
-                }}
-              >
-                <div className="w-full h-full bg-gradient-to-r from-cyan-400 via-purple-500 to-pink-500 rounded-full" />
-              </motion.div>
-
-              {/* Progress Bar Container */}
-              <div className="relative h-4 bg-gray-900/50 backdrop-blur-sm rounded-full overflow-hidden border border-gray-800">
-                {/* Animated Background */}
+            <div className="relative w-64 md:w-80 mx-auto mb-4 md:mb-6">
+              {/* Glow Effect - Desktop only */}
+              {!isMobile && (
                 <motion.div
-                  className="absolute inset-0 opacity-20"
-                  style={{
-                    background: 'linear-gradient(90deg, #00D9FF, #A855F7, #FF6B9D, #00D9FF)',
-                    backgroundSize: '200% 100%',
-                  }}
+                  className="absolute inset-0 blur-xl opacity-50"
                   animate={{
-                    backgroundPosition: ['0% 0%', '200% 0%'],
+                    opacity: [0.3, 0.6, 0.3],
                   }}
                   transition={{
                     duration: 2,
                     repeat: Infinity,
-                    ease: 'linear',
                   }}
-                />
+                >
+                  <div className="w-full h-full bg-gradient-to-r from-cyan-400 via-purple-500 to-pink-500 rounded-full" />
+                </motion.div>
+              )}
+
+              {/* Progress Bar Container */}
+              <div className="relative h-3 md:h-4 bg-gray-900/50 backdrop-blur-sm rounded-full overflow-hidden border border-gray-800">
+                {/* Animated Background - Simplified for mobile */}
+                {!isMobile && (
+                  <motion.div
+                    className="absolute inset-0 opacity-20"
+                    style={{
+                      background: 'linear-gradient(90deg, #00D9FF, #A855F7, #FF6B9D, #00D9FF)',
+                      backgroundSize: '200% 100%',
+                    }}
+                    animate={{
+                      backgroundPosition: ['0% 0%', '200% 0%'],
+                    }}
+                    transition={{
+                      duration: 2,
+                      repeat: Infinity,
+                      ease: 'linear',
+                    }}
+                  />
+                )}
 
                 {/* Progress Fill */}
                 <motion.div
@@ -352,32 +353,34 @@ export default function LoadingScreen() {
                   style={{
                     width: `${progress}%`,
                     background: 'linear-gradient(90deg, #00D9FF, #A855F7, #FF6B9D)',
-                    backgroundSize: '200% 100%',
+                    backgroundSize: isMobile ? '100% 100%' : '200% 100%',
                   }}
-                  animate={{
+                  animate={!isMobile ? {
                     backgroundPosition: ['0% 0%', '200% 0%'],
-                  }}
+                  } : {}}
                   transition={{
                     duration: 1.5,
                     repeat: Infinity,
                     ease: 'linear',
                   }}
                 >
-                  {/* Shimmer Effect */}
-                  <motion.div
-                    className="absolute inset-0"
-                    style={{
-                      background: 'linear-gradient(90deg, transparent, rgba(255,255,255,0.4), transparent)',
-                    }}
-                    animate={{
-                      x: ['-100%', '200%'],
-                    }}
-                    transition={{
-                      duration: 1,
-                      repeat: Infinity,
-                      ease: 'linear',
-                    }}
-                  />
+                  {/* Shimmer Effect - Desktop only */}
+                  {!isMobile && (
+                    <motion.div
+                      className="absolute inset-0"
+                      style={{
+                        background: 'linear-gradient(90deg, transparent, rgba(255,255,255,0.4), transparent)',
+                      }}
+                      animate={{
+                        x: ['-100%', '200%'],
+                      }}
+                      transition={{
+                        duration: 1,
+                        repeat: Infinity,
+                        ease: 'linear',
+                      }}
+                    />
+                  )}
                 </motion.div>
               </div>
             </div>
@@ -386,17 +389,17 @@ export default function LoadingScreen() {
             <motion.div
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
-              transition={{ delay: 0.7 }}
-              className="mb-8"
+              transition={{ delay: 0.5 }}
+              className="mb-6 md:mb-8"
             >
               <motion.p
-                className="text-5xl font-black"
+                className="text-3xl md:text-5xl font-black"
                 style={{
                   background: 'linear-gradient(135deg, #00D9FF, #A855F7, #FF6B9D)',
                   backgroundClip: 'text',
                   WebkitBackgroundClip: 'text',
                   WebkitTextFillColor: 'transparent',
-                  filter: 'drop-shadow(0 0 20px rgba(0, 217, 255, 0.5))',
+                  filter: isMobile ? 'none' : 'drop-shadow(0 0 20px rgba(0, 217, 255, 0.5))',
                 }}
               >
                 {progress}%
@@ -405,40 +408,42 @@ export default function LoadingScreen() {
 
             {/* Animated Dots Loader */}
             <motion.div
-              className="flex justify-center gap-3"
+              className="flex justify-center gap-2 md:gap-3"
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
-              transition={{ delay: 0.9 }}
+              transition={{ delay: 0.7 }}
             >
               {[...Array(5)].map((_, i) => (
                 <motion.div
                   key={i}
                   className="relative"
                 >
-                  {/* Glow */}
-                  <motion.div
-                    className="absolute inset-0 blur-md"
-                    animate={{
-                      scale: [1, 2, 1],
-                      opacity: [0.5, 1, 0.5],
-                    }}
-                    transition={{
-                      duration: 1.5,
-                      repeat: Infinity,
-                      delay: i * 0.15,
-                    }}
-                    style={{
-                      background: ['#00D9FF', '#A855F7', '#FF6B9D', '#FFD700', '#00FF88'][i],
-                    }}
-                  />
+                  {/* Glow - Desktop only */}
+                  {!isMobile && (
+                    <motion.div
+                      className="absolute inset-0 blur-md"
+                      animate={{
+                        scale: [1, 2, 1],
+                        opacity: [0.5, 1, 0.5],
+                      }}
+                      transition={{
+                        duration: 1.5,
+                        repeat: Infinity,
+                        delay: i * 0.15,
+                      }}
+                      style={{
+                        background: ['#00D9FF', '#A855F7', '#FF6B9D', '#FFD700', '#00FF88'][i],
+                      }}
+                    />
+                  )}
                   {/* Dot */}
                   <motion.div
-                    className="relative w-4 h-4 rounded-full"
+                    className="relative w-3 h-3 md:w-4 md:h-4 rounded-full"
                     style={{
                       background: ['#00D9FF', '#A855F7', '#FF6B9D', '#FFD700', '#00FF88'][i],
                     }}
                     animate={{
-                      y: [0, -20, 0],
+                      y: [0, isMobile ? -15 : -20, 0],
                       scale: [1, 1.3, 1],
                     }}
                     transition={{
@@ -457,14 +462,14 @@ export default function LoadingScreen() {
               initial={{ opacity: 0 }}
               animate={{ opacity: [0.5, 1, 0.5] }}
               transition={{ duration: 2, repeat: Infinity }}
-              className="mt-8 text-sm text-gray-500 tracking-widest uppercase"
+              className="mt-6 md:mt-8 text-xs md:text-sm text-gray-500 tracking-widest uppercase"
             >
               Crafting Excellence
             </motion.p>
           </div>
 
-          {/* Corner Accents */}
-          {[
+          {/* Corner Accents - Desktop only */}
+          {!isMobile && [
             { top: 0, left: 0, rotate: 0 },
             { top: 0, right: 0, rotate: 90 },
             { bottom: 0, right: 0, rotate: 180 },
