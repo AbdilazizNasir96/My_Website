@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { useInView } from 'react-intersection-observer';
 import { ExternalLink, Github } from 'lucide-react';
@@ -75,8 +75,66 @@ const projects = [
     featured: false
   }
 ];
-const HorizontalProjectCard = ({ project }: { project: typeof projects[0] }) => {
+const HorizontalProjectCard = ({ project, isMobile }: { project: typeof projects[0]; isMobile?: boolean }) => {
   const [isHovered, setIsHovered] = useState(false);
+  
+  // Simplified for mobile
+  if (isMobile) {
+    return (
+      <div className="flex-shrink-0 w-[350px] mx-4">
+        <div className="glass rounded-xl overflow-hidden border border-primary-500/20 h-full">
+          <div className="relative overflow-hidden h-48 bg-gradient-to-br from-primary-500/10 via-accent-orange/10 to-accent-blue/10">
+            <Image
+              src={project.image}
+              alt={project.title}
+              fill
+              className="object-cover"
+              sizes="350px"
+            />
+            <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent" />
+            
+            {project.featured && (
+              <div className="absolute top-3 right-3 px-3 py-1 bg-gradient-to-r from-accent-orange to-primary-500 text-white text-xs font-bold rounded-full">
+                ⭐ Featured
+              </div>
+            )}
+            
+            <div className="absolute top-3 left-3 px-2 py-1 bg-black/50 backdrop-blur-sm text-white text-xs font-semibold rounded-full border border-primary-500/30">
+              {project.category === 'mobile' && '📱 Mobile'}
+              {project.category === 'web' && '🌐 Web'}
+              {project.category === 'backend' && '⚙️ Backend'}
+            </div>
+          </div>
+
+          <div className="p-5">
+            <h3 className="text-lg font-semibold text-white mb-2 line-clamp-1">
+              {project.title}
+            </h3>
+            <p className="text-gray-400 mb-3 leading-relaxed text-sm line-clamp-2">
+              {project.description}
+            </p>
+            
+            <div className="flex flex-wrap gap-2">
+              {project.technologies.slice(0, 3).map((tech, idx) => (
+                <span
+                  key={idx}
+                  className="px-2 py-1 bg-primary-500/10 text-primary-500 rounded-full text-xs font-medium border border-primary-500/20"
+                >
+                  {tech}
+                </span>
+              ))}
+              {project.technologies.length > 3 && (
+                <span className="px-2 py-1 bg-primary-500/10 text-primary-500 rounded-full text-xs font-medium border border-primary-500/20">
+                  +{project.technologies.length - 3}
+                </span>
+              )}
+            </div>
+          </div>
+        </div>
+      </div>
+    );
+  }
+  
   return (
     <motion.div
       className="flex-shrink-0 w-[400px] mx-4"
@@ -86,10 +144,8 @@ const HorizontalProjectCard = ({ project }: { project: typeof projects[0] }) => 
       transition={{ duration: 0.3 }}
     >
       <div className="glass card-3d spotlight rounded-xl overflow-hidden border border-primary-500/20 hover:border-primary-500/60 transition-all duration-500 hover:shadow-2xl hover:shadow-primary-500/30 relative h-full">
-        {/* Animated gradient border */}
         <div className="absolute inset-0 bg-gradient-to-r from-primary-500 via-accent-orange to-accent-blue opacity-0 group-hover:opacity-20 blur-xl transition-opacity duration-500" />
         
-        {/* Project Image */}
         <div className="relative overflow-hidden h-56 bg-gradient-to-br from-primary-500/10 via-accent-orange/10 to-accent-blue/10">
           <motion.div
             className="relative w-full h-full"
@@ -108,7 +164,6 @@ const HorizontalProjectCard = ({ project }: { project: typeof projects[0] }) => 
             <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent" />
           </motion.div>
           
-          {/* Overlay on hover */}
           <motion.div
             className="absolute inset-0 bg-black/70 backdrop-blur-sm flex items-center justify-center space-x-4 z-10"
             initial={{ opacity: 0 }}
@@ -137,14 +192,12 @@ const HorizontalProjectCard = ({ project }: { project: typeof projects[0] }) => 
             </motion.a>
           </motion.div>
           
-          {/* Featured Badge */}
           {project.featured && (
             <div className="absolute top-3 right-3 px-3 py-1 bg-gradient-to-r from-accent-orange to-primary-500 text-white text-xs font-bold rounded-full shadow-lg z-20">
               ⭐ Featured
             </div>
           )}
           
-          {/* Category Badge */}
           <div className="absolute top-3 left-3 px-2 py-1 bg-black/50 backdrop-blur-sm text-white text-xs font-semibold rounded-full border border-primary-500/30 z-20">
             {project.category === 'mobile' && '📱 Mobile'}
             {project.category === 'web' && '🌐 Web'}
@@ -152,7 +205,6 @@ const HorizontalProjectCard = ({ project }: { project: typeof projects[0] }) => 
           </div>
         </div>
 
-        {/* Project Content */}
         <div className="p-5">
           <h3 className="text-lg font-semibold text-white mb-2 group-hover:text-primary-500 transition-colors line-clamp-1">
             {project.title}
@@ -161,7 +213,6 @@ const HorizontalProjectCard = ({ project }: { project: typeof projects[0] }) => 
             {project.description}
           </p>
           
-          {/* Technologies */}
           <div className="flex flex-wrap gap-2">
             {project.technologies.slice(0, 3).map((tech, idx) => (
               <span
@@ -185,10 +236,20 @@ const HorizontalProjectCard = ({ project }: { project: typeof projects[0] }) => 
 
 export default function Projects() {
   const [isPaused, setIsPaused] = useState(false);
+  const [isMobile, setIsMobile] = useState(false);
   const [titleRef, titleInView] = useInView({
     threshold: 0.3,
     triggerOnce: true
   });
+
+  useEffect(() => {
+    const checkMobile = () => {
+      setIsMobile(window.innerWidth < 768);
+    };
+    checkMobile();
+    window.addEventListener('resize', checkMobile);
+    return () => window.removeEventListener('resize', checkMobile);
+  }, []);
 
   // Duplicate projects for seamless loop
   const duplicatedProjects = [...projects, ...projects, ...projects];
@@ -211,17 +272,21 @@ export default function Projects() {
           <p className="text-xl text-gray-400 max-w-3xl mx-auto mb-4">
             A showcase of my recent work and personal projects that demonstrate my skills and passion for development
           </p>
-          <p className="text-sm text-primary-500">
-            ✨ Hover to pause • Continuously scrolling
-          </p>
+          {!isMobile && (
+            <p className="text-sm text-primary-500">
+              ✨ Hover to pause • Continuously scrolling
+            </p>
+          )}
         </motion.div>
       </div>
 
       {/* Horizontal Auto-Scrolling Container */}
       <div 
         className="relative"
-        onMouseEnter={() => setIsPaused(true)}
-        onMouseLeave={() => setIsPaused(false)}
+        onMouseEnter={() => !isMobile && setIsPaused(true)}
+        onMouseLeave={() => !isMobile && setIsPaused(false)}
+        onTouchStart={() => isMobile && setIsPaused(true)}
+        onTouchEnd={() => isMobile && setIsPaused(false)}
       >
         {/* Gradient Overlays */}
         <div className="absolute left-0 top-0 bottom-0 w-32 bg-gradient-to-r from-dark-bg to-transparent z-10 pointer-events-none" />
@@ -231,19 +296,19 @@ export default function Projects() {
         <motion.div
           className="flex"
           animate={{
-            x: isPaused ? undefined : [0, -((400 + 32) * projects.length)],
+            x: isPaused ? undefined : [0, -((isMobile ? 350 + 32 : 400 + 32) * projects.length)],
           }}
           transition={{
             x: {
               repeat: Infinity,
               repeatType: "loop",
-              duration: 40,
+              duration: isMobile ? 30 : 40,
               ease: "linear",
             },
           }}
         >
           {duplicatedProjects.map((project, index) => (
-            <HorizontalProjectCard key={`${project.id}-${index}`} project={project} />
+            <HorizontalProjectCard key={`${project.id}-${index}`} project={project} isMobile={isMobile} />
           ))}
         </motion.div>
       </div>

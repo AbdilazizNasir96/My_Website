@@ -27,6 +27,41 @@ body {
   color: var(--foreground);
   font-family: var(--font-inter), system-ui, sans-serif;
   overflow-x: hidden;
+  /* Performance optimizations */
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  text-rendering: optimizeLegibility;
+}
+
+/* Performance optimizations for animations */
+@media (prefers-reduced-motion: no-preference) {
+  * {
+    will-change: auto;
+  }
+}
+
+/* Optimize GPU acceleration for animated elements */
+.gpu-accelerated {
+  transform: translateZ(0);
+  backface-visibility: hidden;
+  perspective: 1000px;
+  will-change: transform, opacity;
+}
+
+/* Mobile-specific optimizations */
+@media (max-width: 768px) {
+  * {
+    /* Reduce animation complexity on mobile */
+    animation-duration: 0.5s !important;
+  }
+  
+  .blur-3xl {
+    filter: blur(40px) !important;
+  }
+  
+  .blur-2xl {
+    filter: blur(30px) !important;
+  }
 }
 
 /* Custom scrollbar */
@@ -64,6 +99,7 @@ body {
   border-radius: 50%;
   opacity: 0.1;
   animation: float 6s ease-in-out infinite;
+  will-change: transform;
 }
 
 /* Gradient text */
@@ -74,6 +110,7 @@ body {
   -webkit-text-fill-color: transparent;
   background-clip: text;
   animation: gradient 3s ease infinite;
+  will-change: background-position;
 }
 
 /* Glowing border */
@@ -106,12 +143,13 @@ body {
   animation: blink 1s infinite;
 }
 
-/* Glassmorphism effect */
+/* Glassmorphism effect - Optimized */
 .glass {
   background: rgba(22, 27, 34, 0.7);
   backdrop-filter: blur(10px);
   -webkit-backdrop-filter: blur(10px);
   border: 1px solid rgba(88, 166, 255, 0.1);
+  transform: translateZ(0);
 }
 
 .glass-strong {
@@ -119,6 +157,7 @@ body {
   backdrop-filter: blur(20px);
   -webkit-backdrop-filter: blur(20px);
   border: 1px solid rgba(88, 166, 255, 0.2);
+  transform: translateZ(0);
 }
 
 /* Enhanced gradient backgrounds */
@@ -149,6 +188,7 @@ body {
     radial-gradient(at 80% 100%, hsla(242, 100%, 70%, 0.3) 0px, transparent 50%),
     radial-gradient(at 0% 0%, hsla(343, 100%, 76%, 0.3) 0px, transparent 50%);
   animation: mesh-move 20s ease infinite;
+  will-change: background-position;
 }
 
 @keyframes mesh-move {
@@ -176,6 +216,7 @@ body {
     transparent
   );
   animation: shimmer 3s infinite;
+  will-change: left;
 }
 
 @keyframes shimmer {
@@ -200,10 +241,11 @@ body {
     inset 0 0 5px #58a6ff;
 }
 
-/* 3D card effect */
+/* 3D card effect - Optimized */
 .card-3d {
   transform-style: preserve-3d;
   transition: transform 0.6s cubic-bezier(0.23, 1, 0.32, 1);
+  will-change: transform;
 }
 
 .card-3d:hover {
@@ -213,14 +255,17 @@ body {
 /* Floating animation variants */
 .float-slow {
   animation: float 8s ease-in-out infinite;
+  will-change: transform;
 }
 
 .float-medium {
   animation: float 6s ease-in-out infinite;
+  will-change: transform;
 }
 
 .float-fast {
   animation: float 4s ease-in-out infinite;
+  will-change: transform;
 }
 
 /* Pulse glow animation */
@@ -235,6 +280,7 @@ body {
 
 .pulse-glow {
   animation: pulse-glow 2s ease-in-out infinite;
+  will-change: box-shadow;
 }
 
 /* Spotlight effect */
@@ -278,11 +324,13 @@ body {
 
 .reveal {
   animation: reveal 0.8s cubic-bezier(0.23, 1, 0.32, 1) forwards;
+  will-change: transform, opacity;
 }
 
 /* Magnetic button effect */
 .magnetic-button {
   transition: transform 0.2s cubic-bezier(0.23, 1, 0.32, 1);
+  will-change: transform;
 }
 
 /* Custom selection */
@@ -310,11 +358,13 @@ body {
 
 .page-transition {
   animation: pageSlideIn 0.6s cubic-bezier(0.23, 1, 0.32, 1);
+  will-change: transform, opacity;
 }
 
 /* Image hover effects */
 .image-zoom-in {
   transition: transform 0.5s cubic-bezier(0.23, 1, 0.32, 1);
+  will-change: transform;
 }
 
 .image-zoom-in:hover {
@@ -333,6 +383,7 @@ body {
 
 .image-parallax {
   animation: parallaxFloat 6s ease-in-out infinite;
+  will-change: transform;
 }
 
 /* Smooth fade-in for sections */
@@ -349,6 +400,7 @@ body {
 
 .section-fade-in {
   animation: sectionFadeIn 0.8s cubic-bezier(0.23, 1, 0.32, 1);
+  will-change: transform, opacity;
 }
 
 /* Stagger animation delays */
@@ -368,6 +420,7 @@ body {
   );
   background-size: 200% 100%;
   animation: loading-shimmer 1.5s infinite;
+  will-change: background-position;
 }
 
 @keyframes loading-shimmer {
@@ -382,4 +435,16 @@ body {
 
 .preserve-3d {
   transform-style: preserve-3d;
+}
+
+/* Reduce motion for accessibility */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
 }

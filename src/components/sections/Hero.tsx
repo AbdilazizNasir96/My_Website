@@ -11,6 +11,9 @@ const jobTitles = [
   'Frontend Specialist',
   'Backend Engineer',
   'Database Expert',
+  'Video Editor',
+  'Motion Designer',
+  'Upwork Freelancer',
 ];
 
 const techIcons = [
@@ -31,19 +34,35 @@ const FloatingShape = ({ delay = 0, isMobile = false }: { delay?: number; isMobi
   const colors = ['#58a6ff', '#f78166', '#a5d6ff', '#ff6b9d', '#ffd700'];
   const color = colors[Math.floor(Math.random() * colors.length)];
   
+  // Static shapes on mobile
+  if (isMobile) {
+    return (
+      <div
+        className="absolute text-2xl opacity-5"
+        style={{
+          left: `${Math.random() * 100}%`,
+          top: `${Math.random() * 100}%`,
+          color,
+        }}
+      >
+        {shape}
+      </div>
+    );
+  }
+  
   return (
     <motion.div
-      className="absolute text-2xl md:text-4xl opacity-10 md:opacity-20"
+      className="absolute text-4xl opacity-20"
       style={{
         left: `${Math.random() * 100}%`,
         top: `${Math.random() * 100}%`,
         color,
       }}
       animate={{
-        y: [0, isMobile ? -50 : -100, 0],
+        y: [0, -100, 0],
         x: [0, Math.random() * 50 - 25, 0],
         rotate: [0, 360],
-        opacity: [0.1, isMobile ? 0.2 : 0.4, 0.1],
+        opacity: [0.1, 0.4, 0.1],
       }}
       transition={{
         duration: Math.random() * 8 + 10,
@@ -59,14 +78,17 @@ const FloatingShape = ({ delay = 0, isMobile = false }: { delay?: number; isMobi
 
 // Simplified Matrix-style falling code
 const FallingCode = ({ isMobile = false }: { isMobile?: boolean }) => {
+  // Don't render on mobile
+  if (isMobile) return null;
+  
   const codes = ['{ }', '< />', '[ ]', '( )', '=>', 'fn'];
   
   return (
     <div className="absolute inset-0 overflow-hidden pointer-events-none">
-      {Array.from({ length: isMobile ? 8 : 15 }).map((_, i) => (
+      {Array.from({ length: 12 }).map((_, i) => (
         <motion.div
           key={i}
-          className="absolute text-primary-500 font-mono text-xs md:text-sm opacity-20"
+          className="absolute text-primary-500 font-mono text-sm opacity-20"
           style={{
             left: `${Math.random() * 100}%`,
             top: -20,
@@ -142,14 +164,16 @@ const FloatingTechIcon = ({ icon, index, isMobile }: { icon: typeof techIcons[0]
   );
 };
 
-// Job Title Animation
+// Enhanced Job Title Animation with Multiple Effects
 const JobTitleAnimation = () => {
   const [currentIndex, setCurrentIndex] = useState(0);
+  const [isMobile, setIsMobile] = useState(false);
 
   useEffect(() => {
+    setIsMobile(window.innerWidth < 768);
     const interval = setInterval(() => {
       setCurrentIndex((prev) => (prev + 1) % jobTitles.length);
-    }, 3000);
+    }, 3500);
     return () => clearInterval(interval);
   }, []);
 
@@ -161,49 +185,203 @@ const JobTitleAnimation = () => {
     'from-yellow-400 via-orange-500 to-red-500',
   ];
 
+  const glowColors = [
+    'rgba(88, 166, 255, 0.6)',
+    'rgba(255, 107, 157, 0.6)',
+    'rgba(0, 255, 136, 0.6)',
+    'rgba(168, 85, 247, 0.6)',
+    'rgba(255, 215, 0, 0.6)',
+  ];
+
   return (
     <motion.div
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
       transition={{ delay: 0.8, duration: 0.8 }}
-      className="text-xl sm:text-2xl lg:text-4xl font-bold mb-6 md:mb-8 h-16 md:h-24 flex items-center justify-center relative"
+      className="text-xl sm:text-2xl lg:text-4xl font-bold mb-6 md:mb-8 h-20 md:h-28 flex items-center justify-center relative"
     >
-      <span className="text-gray-300 mr-3 md:mr-4 text-xl md:text-3xl">I'm a</span>
-      <div className="relative inline-block min-w-[250px] sm:min-w-[400px] h-full flex items-center justify-start">
+      <motion.span 
+        className="text-gray-300 mr-3 md:mr-4 text-xl md:text-3xl"
+        animate={{ opacity: [0.7, 1, 0.7] }}
+        transition={{ duration: 2, repeat: Infinity }}
+      >
+        I'm a
+      </motion.span>
+      <div className="relative inline-block min-w-[280px] sm:min-w-[450px] h-full flex items-center justify-start overflow-hidden">
         <AnimatePresence mode="wait">
-          <motion.span
+          <motion.div
             key={currentIndex}
-            initial={{ 
-              opacity: 0,
-              y: 30,
-              filter: 'blur(10px)',
-              scale: 0.8,
-            }}
-            animate={{ 
-              opacity: 1,
-              y: 0,
-              filter: 'blur(0px)',
-              scale: 1,
-            }}
-            exit={{ 
-              opacity: 0,
-              y: -30,
-              filter: 'blur(10px)',
-              scale: 0.8,
-            }}
-            transition={{
-              duration: 0.6,
-              ease: 'easeInOut',
-            }}
-            className={`
-              absolute left-0 top-1/2 -translate-y-1/2
-              bg-gradient-to-r ${gradients[currentIndex]} 
-              bg-clip-text text-transparent font-black
-            `}
+            className="absolute left-0 top-1/2 -translate-y-1/2"
           >
-            {jobTitles[currentIndex]}
-          </motion.span>
+            {/* Glowing background effect - Desktop only */}
+            {!isMobile && (
+              <motion.div
+                className="absolute inset-0 blur-2xl"
+                initial={{ opacity: 0, scale: 0.5 }}
+                animate={{ 
+                  opacity: [0, 0.8, 0.8, 0],
+                  scale: [0.5, 1.2, 1.2, 0.8],
+                }}
+                exit={{ opacity: 0 }}
+                transition={{ duration: 0.8 }}
+                style={{
+                  background: glowColors[currentIndex],
+                }}
+              />
+            )}
+
+            {/* Main text with multiple animation variants */}
+            <motion.span
+              initial={{ 
+                opacity: 0,
+                x: -100,
+                rotateX: -90,
+                scale: 0.5,
+                filter: 'blur(20px)',
+              }}
+              animate={{ 
+                opacity: 1,
+                x: 0,
+                rotateX: 0,
+                scale: 1,
+                filter: 'blur(0px)',
+              }}
+              exit={{ 
+                opacity: 0,
+                x: 100,
+                rotateX: 90,
+                scale: 0.5,
+                filter: 'blur(20px)',
+              }}
+              transition={{
+                duration: 0.7,
+                ease: [0.68, -0.55, 0.265, 1.55],
+              }}
+              className={`
+                relative inline-block
+                bg-gradient-to-r ${gradients[currentIndex]} 
+                bg-clip-text text-transparent font-black
+              `}
+              style={{
+                backgroundSize: '200% 200%',
+                textShadow: isMobile ? 'none' : `0 0 40px ${glowColors[currentIndex]}`,
+              }}
+            >
+              {/* Animated gradient background */}
+              <motion.span
+                animate={{
+                  backgroundPosition: ['0% 50%', '100% 50%', '0% 50%'],
+                }}
+                transition={{
+                  duration: 3,
+                  repeat: Infinity,
+                  ease: 'linear'
+                }}
+                className={`bg-gradient-to-r ${gradients[currentIndex]}`}
+                style={{
+                  backgroundSize: '200% 200%',
+                  WebkitBackgroundClip: 'text',
+                  WebkitTextFillColor: 'transparent',
+                  backgroundClip: 'text',
+                }}
+              >
+                {jobTitles[currentIndex].split('').map((char, idx) => (
+                  <motion.span
+                    key={idx}
+                    initial={{ opacity: 0, y: 20 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{
+                      delay: idx * 0.05,
+                      duration: 0.3,
+                    }}
+                    className="inline-block"
+                  >
+                    {char === ' ' ? '\u00A0' : char}
+                  </motion.span>
+                ))}
+              </motion.span>
+
+              {/* Underline animation - Desktop only */}
+              {!isMobile && (
+                <motion.div
+                  className="absolute bottom-0 left-0 h-1 rounded-full"
+                  initial={{ width: '0%', opacity: 0 }}
+                  animate={{ 
+                    width: '100%', 
+                    opacity: [0, 1, 1, 0],
+                  }}
+                  transition={{ 
+                    width: { duration: 0.8, delay: 0.3 },
+                    opacity: { duration: 1.5, times: [0, 0.3, 0.7, 1] }
+                  }}
+                  style={{
+                    background: `linear-gradient(to right, ${glowColors[currentIndex]}, transparent)`,
+                    boxShadow: `0 0 10px ${glowColors[currentIndex]}`,
+                  }}
+                />
+              )}
+            </motion.span>
+
+            {/* Sparkle effects - Desktop only */}
+            {!isMobile && (
+              <>
+                {[...Array(3)].map((_, i) => (
+                  <motion.div
+                    key={i}
+                    className="absolute text-2xl"
+                    initial={{ 
+                      opacity: 0, 
+                      scale: 0,
+                      x: Math.random() * 100 - 50,
+                      y: Math.random() * 40 - 20,
+                    }}
+                    animate={{ 
+                      opacity: [0, 1, 0],
+                      scale: [0, 1.5, 0],
+                      rotate: [0, 180, 360],
+                    }}
+                    transition={{
+                      duration: 1,
+                      delay: 0.3 + i * 0.15,
+                    }}
+                    style={{
+                      left: `${20 + i * 30}%`,
+                      top: i % 2 === 0 ? '-20px' : 'auto',
+                      bottom: i % 2 === 1 ? '-20px' : 'auto',
+                    }}
+                  >
+                    ✨
+                  </motion.div>
+                ))}
+              </>
+            )}
+          </motion.div>
         </AnimatePresence>
+        
+        {/* Animated cursor with pulse */}
+        <motion.span
+          className="absolute w-1 md:w-1.5 h-8 md:h-12 bg-gradient-to-b from-cyan-400 to-blue-600 rounded-full"
+          style={{
+            right: '-10px',
+            top: '50%',
+            transform: 'translateY(-50%)',
+            boxShadow: '0 0 15px rgba(88, 166, 255, 0.8)',
+          }}
+          animate={{
+            opacity: [1, 0, 1],
+            scaleY: [1, 0.8, 1],
+            boxShadow: [
+              '0 0 15px rgba(88, 166, 255, 0.8)',
+              '0 0 25px rgba(88, 166, 255, 1)',
+              '0 0 15px rgba(88, 166, 255, 0.8)',
+            ],
+          }}
+          transition={{
+            duration: 0.8,
+            repeat: Infinity,
+            ease: 'easeInOut'
+          }}
+        />
       </div>
     </motion.div>
   );
@@ -246,12 +424,12 @@ export default function Hero() {
       
       {/* Additional Hero-specific effects */}
       <div className="absolute inset-0">
-        {/* Floating Geometric Shapes - Reduced for mobile */}
-        {Array.from({ length: isMobile ? 5 : 12 }).map((_, i) => (
+        {/* Floating Geometric Shapes - Minimal for mobile */}
+        {Array.from({ length: isMobile ? 3 : 12 }).map((_, i) => (
           <FloatingShape key={i} delay={i * 0.3} isMobile={isMobile} />
         ))}
         
-        {/* Matrix Falling Code */}
+        {/* Matrix Falling Code - Desktop only */}
         <FallingCode isMobile={isMobile} />
         
         {/* Animated Grid - Desktop only */}

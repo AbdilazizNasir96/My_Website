@@ -9,31 +9,47 @@ interface FloatingOrbProps {
   isMobile?: boolean;
 }
 
-const FloatingOrb = ({ delay = 0, duration = 4, isMobile = false }: FloatingOrbProps) => (
-  <motion.div
-    className="absolute w-48 h-48 md:w-64 md:h-64 rounded-full blur-2xl md:blur-3xl opacity-15 md:opacity-20"
-    style={{
-      background: `radial-gradient(circle, ${
-        ['#a855f7', '#ec4899', '#f59e0b', '#8b5cf6', '#58a6ff', '#00ff88'][Math.floor(Math.random() * 6)]
-      }, transparent)`,
-      left: `${Math.random() * 80}%`,
-      top: `${Math.random() * 80}%`,
-    }}
-    animate={!isMobile ? {
-      x: [0, Math.random() * 100 - 50, 0],
-      y: [0, Math.random() * 100 - 50, 0],
-      scale: [1, 1.2, 1],
-    } : {
-      scale: [1, 1.1, 1],
-    }}
-    transition={{
-      duration,
-      repeat: Infinity,
-      delay,
-      ease: 'easeInOut',
-    }}
-  />
-);
+const FloatingOrb = ({ delay = 0, duration = 4, isMobile = false }: FloatingOrbProps) => {
+  // On mobile, use simpler animations
+  if (isMobile) {
+    return (
+      <div
+        className="absolute w-48 h-48 rounded-full blur-2xl opacity-10"
+        style={{
+          background: `radial-gradient(circle, ${
+            ['#a855f7', '#ec4899', '#58a6ff'][Math.floor(Math.random() * 3)]
+          }, transparent)`,
+          left: `${Math.random() * 80}%`,
+          top: `${Math.random() * 80}%`,
+        }}
+      />
+    );
+  }
+
+  return (
+    <motion.div
+      className="absolute w-64 h-64 rounded-full blur-3xl opacity-20"
+      style={{
+        background: `radial-gradient(circle, ${
+          ['#a855f7', '#ec4899', '#f59e0b', '#8b5cf6', '#58a6ff', '#00ff88'][Math.floor(Math.random() * 6)]
+        }, transparent)`,
+        left: `${Math.random() * 80}%`,
+        top: `${Math.random() * 80}%`,
+      }}
+      animate={{
+        x: [0, Math.random() * 100 - 50, 0],
+        y: [0, Math.random() * 100 - 50, 0],
+        scale: [1, 1.2, 1],
+      }}
+      transition={{
+        duration,
+        repeat: Infinity,
+        delay,
+        ease: 'easeInOut',
+      }}
+    />
+  );
+};
 
 export default function PremiumBackground() {
   const [isMobile, setIsMobile] = useState(false);
@@ -57,30 +73,44 @@ export default function PremiumBackground() {
         }}
       />
 
-      {/* Layer 2: Animated Mesh Gradient */}
-      <motion.div
-        className="absolute inset-0 opacity-30 md:opacity-40"
-        style={{
-          background: `
-            radial-gradient(at 0% 0%, rgba(88, 166, 255, 0.3) 0px, transparent 50%),
-            radial-gradient(at 100% 0%, rgba(236, 72, 153, 0.3) 0px, transparent 50%),
-            radial-gradient(at 100% 100%, rgba(245, 158, 11, 0.3) 0px, transparent 50%),
-            radial-gradient(at 0% 100%, rgba(139, 92, 246, 0.3) 0px, transparent 50%)
-          `,
-        }}
-        animate={!isMobile ? {
-          opacity: [0.3, 0.5, 0.3],
-        } : {}}
-        transition={{
-          duration: 8,
-          repeat: Infinity,
-          ease: 'easeInOut',
-        }}
-      />
+      {/* Layer 2: Static Mesh Gradient for mobile, animated for desktop */}
+      {isMobile ? (
+        <div
+          className="absolute inset-0 opacity-30"
+          style={{
+            background: `
+              radial-gradient(at 0% 0%, rgba(88, 166, 255, 0.2) 0px, transparent 50%),
+              radial-gradient(at 100% 0%, rgba(236, 72, 153, 0.2) 0px, transparent 50%),
+              radial-gradient(at 100% 100%, rgba(245, 158, 11, 0.2) 0px, transparent 50%),
+              radial-gradient(at 0% 100%, rgba(139, 92, 246, 0.2) 0px, transparent 50%)
+            `,
+          }}
+        />
+      ) : (
+        <motion.div
+          className="absolute inset-0 opacity-40"
+          style={{
+            background: `
+              radial-gradient(at 0% 0%, rgba(88, 166, 255, 0.3) 0px, transparent 50%),
+              radial-gradient(at 100% 0%, rgba(236, 72, 153, 0.3) 0px, transparent 50%),
+              radial-gradient(at 100% 100%, rgba(245, 158, 11, 0.3) 0px, transparent 50%),
+              radial-gradient(at 0% 100%, rgba(139, 92, 246, 0.3) 0px, transparent 50%)
+            `,
+          }}
+          animate={{
+            opacity: [0.3, 0.5, 0.3],
+          }}
+          transition={{
+            duration: 8,
+            repeat: Infinity,
+            ease: 'easeInOut',
+          }}
+        />
+      )}
 
-      {/* Layer 3: Floating Gradient Orbs - Reduced for mobile */}
+      {/* Layer 3: Floating Gradient Orbs - Minimal for mobile */}
       <div className="absolute inset-0">
-        {[...Array(isMobile ? 3 : 6)].map((_, i) => (
+        {[...Array(isMobile ? 2 : 6)].map((_, i) => (
           <FloatingOrb key={i} delay={i * 0.7} duration={5 + i * 0.5} isMobile={isMobile} />
         ))}
       </div>
@@ -104,32 +134,34 @@ export default function PremiumBackground() {
         />
       )}
 
-      {/* Layer 5: Floating Particles - Reduced for mobile */}
-      <div className="absolute inset-0 overflow-hidden">
-        {[...Array(isMobile ? 10 : 20)].map((_, i) => (
-          <motion.div
-            key={`particle-${i}`}
-            className="absolute w-1 h-1 bg-primary-500 rounded-full"
-            style={{
-              left: `${Math.random() * 100}%`,
-              top: `${Math.random() * 100}%`,
-              filter: 'blur(1px)',
-            }}
-            animate={{
-              y: [0, isMobile ? -50 : -100, 0],
-              x: [0, Math.random() * 50 - 25, 0],
-              opacity: [0, 1, 0],
-              scale: [0, 1.5, 0],
-            }}
-            transition={{
-              duration: 5 + Math.random() * 5,
-              repeat: Infinity,
-              delay: Math.random() * 5,
-              ease: 'easeInOut',
-            }}
-          />
-        ))}
-      </div>
+      {/* Layer 5: Floating Particles - Minimal for mobile */}
+      {!isMobile && (
+        <div className="absolute inset-0 overflow-hidden">
+          {[...Array(15)].map((_, i) => (
+            <motion.div
+              key={`particle-${i}`}
+              className="absolute w-1 h-1 bg-primary-500 rounded-full"
+              style={{
+                left: `${Math.random() * 100}%`,
+                top: `${Math.random() * 100}%`,
+                filter: 'blur(1px)',
+              }}
+              animate={{
+                y: [0, -100, 0],
+                x: [0, Math.random() * 50 - 25, 0],
+                opacity: [0, 1, 0],
+                scale: [0, 1.5, 0],
+              }}
+              transition={{
+                duration: 5 + Math.random() * 5,
+                repeat: Infinity,
+                delay: Math.random() * 5,
+                ease: 'easeInOut',
+              }}
+            />
+          ))}
+        </div>
+      )}
 
       {/* Layer 6: Animated Grid - Desktop only */}
       {!isMobile && (
@@ -153,22 +185,31 @@ export default function PremiumBackground() {
         />
       )}
 
-      {/* Layer 7: Radial Pulse - Simplified for mobile */}
-      <motion.div
-        className="absolute inset-0 opacity-15 md:opacity-20"
-        style={{
-          background: 'radial-gradient(circle at 50% 50%, rgba(88, 166, 255, 0.4) 0%, transparent 70%)',
-        }}
-        animate={{
-          scale: [1, isMobile ? 1.1 : 1.2, 1],
-          opacity: [0.1, isMobile ? 0.2 : 0.3, 0.1],
-        }}
-        transition={{
-          duration: 6,
-          repeat: Infinity,
-          ease: 'easeInOut',
-        }}
-      />
+      {/* Layer 7: Radial Pulse - Simplified */}
+      {isMobile ? (
+        <div
+          className="absolute inset-0 opacity-10"
+          style={{
+            background: 'radial-gradient(circle at 50% 50%, rgba(88, 166, 255, 0.3) 0%, transparent 70%)',
+          }}
+        />
+      ) : (
+        <motion.div
+          className="absolute inset-0 opacity-20"
+          style={{
+            background: 'radial-gradient(circle at 50% 50%, rgba(88, 166, 255, 0.4) 0%, transparent 70%)',
+          }}
+          animate={{
+            scale: [1, 1.2, 1],
+            opacity: [0.1, 0.3, 0.1],
+          }}
+          transition={{
+            duration: 6,
+            repeat: Infinity,
+            ease: 'easeInOut',
+          }}
+        />
+      )}
 
       {/* Layer 8: Moving Spotlights - Desktop only */}
       {!isMobile && (
