@@ -164,7 +164,7 @@ const FloatingTechIcon = ({ icon, index, isMobile }: { icon: typeof techIcons[0]
   );
 };
 
-// Enhanced Job Title Animation with Multiple Effects
+// INSANE Job Title Animation - Works on both mobile and desktop
 const JobTitleAnimation = () => {
   const [currentIndex, setCurrentIndex] = useState(0);
   const [isMobile, setIsMobile] = useState(false);
@@ -173,7 +173,7 @@ const JobTitleAnimation = () => {
     setIsMobile(window.innerWidth < 768);
     const interval = setInterval(() => {
       setCurrentIndex((prev) => (prev + 1) % jobTitles.length);
-    }, 3500);
+    }, 4000);
     return () => clearInterval(interval);
   }, []);
 
@@ -183,14 +183,20 @@ const JobTitleAnimation = () => {
     'from-green-400 via-cyan-500 to-blue-500',
     'from-purple-500 via-pink-500 to-red-500',
     'from-yellow-400 via-orange-500 to-red-500',
+    'from-blue-500 via-purple-500 to-pink-500',
+    'from-orange-500 via-red-500 to-pink-500',
+    'from-teal-400 via-cyan-500 to-blue-500',
   ];
 
   const glowColors = [
-    'rgba(88, 166, 255, 0.6)',
-    'rgba(255, 107, 157, 0.6)',
-    'rgba(0, 255, 136, 0.6)',
-    'rgba(168, 85, 247, 0.6)',
-    'rgba(255, 215, 0, 0.6)',
+    '#58a6ff',
+    '#ff6b9d',
+    '#00ff88',
+    '#a855f7',
+    '#ffd700',
+    '#8b5cf6',
+    '#f97316',
+    '#14b8a6',
   ];
 
   return (
@@ -198,188 +204,300 @@ const JobTitleAnimation = () => {
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
       transition={{ delay: 0.8, duration: 0.8 }}
-      className="text-xl sm:text-2xl lg:text-4xl font-bold mb-6 md:mb-8 h-20 md:h-28 flex items-center justify-center relative"
+      className="text-xl sm:text-2xl lg:text-4xl font-bold mb-6 md:mb-8 h-24 md:h-32 flex items-center justify-center relative overflow-hidden"
     >
+      {/* Animated "I'm a" text */}
       <motion.span 
-        className="text-gray-300 mr-3 md:mr-4 text-xl md:text-3xl"
-        animate={{ opacity: [0.7, 1, 0.7] }}
+        className="text-gray-300 mr-3 md:mr-4 text-xl md:text-3xl relative z-10"
+        animate={{ 
+          opacity: [0.7, 1, 0.7],
+          scale: [1, 1.05, 1],
+        }}
         transition={{ duration: 2, repeat: Infinity }}
       >
         I'm a
       </motion.span>
-      <div className="relative inline-block min-w-[280px] sm:min-w-[450px] h-full flex items-center justify-start overflow-hidden">
+
+      {/* Main container for job title */}
+      <div className="relative inline-block min-w-[280px] sm:min-w-[450px] h-full flex items-center justify-start perspective-1000">
         <AnimatePresence mode="wait">
           <motion.div
             key={currentIndex}
-            className="absolute left-0 top-1/2 -translate-y-1/2"
+            className="absolute left-0 top-1/2 -translate-y-1/2 w-full"
           >
-            {/* Glowing background effect - Desktop only */}
-            {!isMobile && (
-              <motion.div
-                className="absolute inset-0 blur-2xl"
-                initial={{ opacity: 0, scale: 0.5 }}
-                animate={{ 
-                  opacity: [0, 0.8, 0.8, 0],
-                  scale: [0.5, 1.2, 1.2, 0.8],
-                }}
-                exit={{ opacity: 0 }}
-                transition={{ duration: 0.8 }}
+            {/* Explosive background burst */}
+            <motion.div
+              className="absolute inset-0 -z-10"
+              initial={{ scale: 0, opacity: 0 }}
+              animate={{ 
+                scale: [0, 2, 1.5],
+                opacity: [0, 0.6, 0],
+              }}
+              transition={{ duration: 0.8 }}
+            >
+              <div 
+                className="w-full h-full rounded-full blur-3xl"
                 style={{
-                  background: glowColors[currentIndex],
+                  background: `radial-gradient(circle, ${glowColors[currentIndex]}, transparent)`,
                 }}
               />
-            )}
+            </motion.div>
 
-            {/* Main text with multiple animation variants */}
-            <motion.span
+            {/* Rotating 3D text container */}
+            <motion.div
               initial={{ 
+                rotateX: 90,
+                rotateY: -90,
+                scale: 0,
                 opacity: 0,
-                x: -100,
-                rotateX: -90,
-                scale: 0.5,
-                filter: 'blur(20px)',
               }}
               animate={{ 
-                opacity: 1,
-                x: 0,
                 rotateX: 0,
+                rotateY: 0,
                 scale: 1,
-                filter: 'blur(0px)',
+                opacity: 1,
               }}
               exit={{ 
+                rotateX: -90,
+                rotateY: 90,
+                scale: 0,
                 opacity: 0,
-                x: 100,
-                rotateX: 90,
-                scale: 0.5,
-                filter: 'blur(20px)',
               }}
               transition={{
-                duration: 0.7,
+                duration: 0.8,
                 ease: [0.68, -0.55, 0.265, 1.55],
               }}
-              className={`
-                relative inline-block
-                bg-gradient-to-r ${gradients[currentIndex]} 
-                bg-clip-text text-transparent font-black
-              `}
-              style={{
-                backgroundSize: '200% 200%',
-                textShadow: isMobile ? 'none' : `0 0 40px ${glowColors[currentIndex]}`,
-              }}
+              className="relative preserve-3d"
             >
-              {/* Animated gradient background */}
-              <motion.span
-                animate={{
-                  backgroundPosition: ['0% 50%', '100% 50%', '0% 50%'],
-                }}
-                transition={{
-                  duration: 3,
-                  repeat: Infinity,
-                  ease: 'linear'
-                }}
-                className={`bg-gradient-to-r ${gradients[currentIndex]}`}
-                style={{
-                  backgroundSize: '200% 200%',
-                  WebkitBackgroundClip: 'text',
-                  WebkitTextFillColor: 'transparent',
-                  backgroundClip: 'text',
-                }}
-              >
+              {/* Main text with split animation */}
+              <div className="relative">
                 {jobTitles[currentIndex].split('').map((char, idx) => (
                   <motion.span
                     key={idx}
-                    initial={{ opacity: 0, y: 20 }}
-                    animate={{ opacity: 1, y: 0 }}
+                    initial={{ 
+                      opacity: 0, 
+                      y: 50,
+                      rotateX: -90,
+                      scale: 0,
+                    }}
+                    animate={{ 
+                      opacity: 1, 
+                      y: 0,
+                      rotateX: 0,
+                      scale: 1,
+                    }}
+                    exit={{
+                      opacity: 0,
+                      y: -50,
+                      rotateX: 90,
+                      scale: 0,
+                    }}
                     transition={{
                       delay: idx * 0.05,
-                      duration: 0.3,
+                      duration: 0.5,
+                      ease: [0.68, -0.55, 0.265, 1.55],
                     }}
-                    className="inline-block"
+                    className={`
+                      inline-block font-black
+                      bg-gradient-to-r ${gradients[currentIndex]} 
+                      bg-clip-text text-transparent
+                    `}
+                    style={{
+                      backgroundSize: '200% 200%',
+                      textShadow: isMobile ? 'none' : `0 0 30px ${glowColors[currentIndex]}`,
+                      filter: isMobile ? 'none' : `drop-shadow(0 0 20px ${glowColors[currentIndex]})`,
+                    }}
                   >
                     {char === ' ' ? '\u00A0' : char}
                   </motion.span>
                 ))}
-              </motion.span>
 
-              {/* Underline animation - Desktop only */}
-              {!isMobile && (
+                {/* Animated gradient wave effect */}
                 <motion.div
-                  className="absolute bottom-0 left-0 h-1 rounded-full"
-                  initial={{ width: '0%', opacity: 0 }}
-                  animate={{ 
-                    width: '100%', 
-                    opacity: [0, 1, 1, 0],
+                  className="absolute inset-0 -z-10"
+                  animate={{
+                    backgroundPosition: ['0% 50%', '100% 50%', '0% 50%'],
                   }}
-                  transition={{ 
-                    width: { duration: 0.8, delay: 0.3 },
-                    opacity: { duration: 1.5, times: [0, 0.3, 0.7, 1] }
+                  transition={{
+                    duration: 3,
+                    repeat: Infinity,
+                    ease: 'linear',
                   }}
                   style={{
-                    background: `linear-gradient(to right, ${glowColors[currentIndex]}, transparent)`,
-                    boxShadow: `0 0 10px ${glowColors[currentIndex]}`,
+                    background: `linear-gradient(90deg, transparent, ${glowColors[currentIndex]}20, transparent)`,
+                    backgroundSize: '200% 100%',
                   }}
                 />
-              )}
-            </motion.span>
+              </div>
 
-            {/* Sparkle effects - Desktop only */}
+              {/* Orbiting particles around text */}
+              {!isMobile && [...Array(6)].map((_, i) => (
+                <motion.div
+                  key={i}
+                  className="absolute w-2 h-2 rounded-full"
+                  style={{
+                    background: glowColors[currentIndex],
+                    boxShadow: `0 0 10px ${glowColors[currentIndex]}`,
+                  }}
+                  initial={{ 
+                    opacity: 0,
+                    scale: 0,
+                  }}
+                  animate={{ 
+                    opacity: [0, 1, 1, 0],
+                    scale: [0, 1.5, 1.5, 0],
+                    x: [
+                      0,
+                      Math.cos((i * 60 * Math.PI) / 180) * 100,
+                      Math.cos((i * 60 * Math.PI) / 180) * 150,
+                    ],
+                    y: [
+                      0,
+                      Math.sin((i * 60 * Math.PI) / 180) * 100,
+                      Math.sin((i * 60 * Math.PI) / 180) * 150,
+                    ],
+                  }}
+                  transition={{
+                    duration: 1.5,
+                    delay: 0.3 + i * 0.1,
+                    ease: 'easeOut',
+                  }}
+                />
+              ))}
+
+              {/* Explosion sparkles */}
+              {[...Array(isMobile ? 4 : 8)].map((_, i) => (
+                <motion.div
+                  key={`spark-${i}`}
+                  className="absolute text-xl md:text-2xl"
+                  initial={{ 
+                    opacity: 0, 
+                    scale: 0,
+                    x: 0,
+                    y: 0,
+                  }}
+                  animate={{ 
+                    opacity: [0, 1, 0],
+                    scale: [0, 1.5, 0],
+                    x: Math.cos((i * 45 * Math.PI) / 180) * (isMobile ? 60 : 100),
+                    y: Math.sin((i * 45 * Math.PI) / 180) * (isMobile ? 60 : 100),
+                    rotate: [0, 360],
+                  }}
+                  transition={{
+                    duration: 1,
+                    delay: 0.2 + i * 0.05,
+                    ease: 'easeOut',
+                  }}
+                  style={{
+                    left: '50%',
+                    top: '50%',
+                  }}
+                >
+                  ✨
+                </motion.div>
+              ))}
+
+              {/* Pulsing underline */}
+              <motion.div
+                className="absolute -bottom-2 left-0 h-1 rounded-full"
+                initial={{ width: '0%', opacity: 0 }}
+                animate={{ 
+                  width: ['0%', '100%', '100%'],
+                  opacity: [0, 1, 0],
+                  boxShadow: [
+                    `0 0 0px ${glowColors[currentIndex]}`,
+                    `0 0 20px ${glowColors[currentIndex]}`,
+                    `0 0 0px ${glowColors[currentIndex]}`,
+                  ],
+                }}
+                transition={{ 
+                  duration: 2,
+                  times: [0, 0.5, 1],
+                }}
+                style={{
+                  background: `linear-gradient(90deg, transparent, ${glowColors[currentIndex]}, transparent)`,
+                }}
+              />
+
+              {/* Scanning line effect */}
+              <motion.div
+                className="absolute inset-0 -z-10"
+                initial={{ x: '-100%' }}
+                animate={{ x: '200%' }}
+                transition={{
+                  duration: 1.5,
+                  delay: 0.3,
+                  ease: 'easeInOut',
+                }}
+                style={{
+                  background: `linear-gradient(90deg, transparent, ${glowColors[currentIndex]}40, transparent)`,
+                  width: '50%',
+                }}
+              />
+            </motion.div>
+
+            {/* Ripple effect */}
             {!isMobile && (
-              <>
-                {[...Array(3)].map((_, i) => (
-                  <motion.div
-                    key={i}
-                    className="absolute text-2xl"
-                    initial={{ 
-                      opacity: 0, 
-                      scale: 0,
-                      x: Math.random() * 100 - 50,
-                      y: Math.random() * 40 - 20,
-                    }}
-                    animate={{ 
-                      opacity: [0, 1, 0],
-                      scale: [0, 1.5, 0],
-                      rotate: [0, 180, 360],
-                    }}
-                    transition={{
-                      duration: 1,
-                      delay: 0.3 + i * 0.15,
-                    }}
-                    style={{
-                      left: `${20 + i * 30}%`,
-                      top: i % 2 === 0 ? '-20px' : 'auto',
-                      bottom: i % 2 === 1 ? '-20px' : 'auto',
-                    }}
-                  >
-                    ✨
-                  </motion.div>
-                ))}
-              </>
+              <motion.div
+                className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 -z-20"
+                initial={{ scale: 0, opacity: 0.8 }}
+                animate={{ 
+                  scale: [0, 3],
+                  opacity: [0.8, 0],
+                }}
+                transition={{ duration: 1.5 }}
+              >
+                <div 
+                  className="w-32 h-32 rounded-full border-4"
+                  style={{
+                    borderColor: glowColors[currentIndex],
+                  }}
+                />
+              </motion.div>
             )}
           </motion.div>
         </AnimatePresence>
         
-        {/* Animated cursor with pulse */}
-        <motion.span
-          className="absolute w-1 md:w-1.5 h-8 md:h-12 bg-gradient-to-b from-cyan-400 to-blue-600 rounded-full"
+        {/* Glitch cursor effect */}
+        <motion.div
+          className="absolute w-1 md:w-1.5 h-10 md:h-14 rounded-full"
           style={{
-            right: '-10px',
+            right: '-15px',
             top: '50%',
             transform: 'translateY(-50%)',
-            boxShadow: '0 0 15px rgba(88, 166, 255, 0.8)',
+            background: `linear-gradient(to bottom, ${glowColors[currentIndex]}, transparent)`,
+            boxShadow: `0 0 20px ${glowColors[currentIndex]}`,
           }}
           animate={{
             opacity: [1, 0, 1],
             scaleY: [1, 0.8, 1],
-            boxShadow: [
-              '0 0 15px rgba(88, 166, 255, 0.8)',
-              '0 0 25px rgba(88, 166, 255, 1)',
-              '0 0 15px rgba(88, 166, 255, 0.8)',
-            ],
+            scaleX: [1, 1.5, 1],
           }}
           transition={{
             duration: 0.8,
             repeat: Infinity,
             ease: 'easeInOut'
+          }}
+        />
+
+        {/* Holographic scan lines */}
+        <motion.div
+          className="absolute inset-0 pointer-events-none -z-10"
+          style={{
+            background: `repeating-linear-gradient(
+              0deg,
+              transparent,
+              transparent 2px,
+              ${glowColors[currentIndex]}10 2px,
+              ${glowColors[currentIndex]}10 4px
+            )`,
+          }}
+          animate={{
+            opacity: [0, 0.3, 0],
+          }}
+          transition={{
+            duration: 2,
+            repeat: Infinity,
           }}
         />
       </div>
