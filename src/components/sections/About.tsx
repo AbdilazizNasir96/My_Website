@@ -262,11 +262,11 @@ export default function About() {
                   className="absolute inset-0 rounded-full ring-4 ring-primary-500/20 blur-sm"
                 />
 
-                {/* Floating Particles Around Photo */}
+                {/* Floating Particles Around Photo - Desktop only */}
                 {Array.from({ length: 6 }).map((_, i) => (
                   <motion.div
                     key={i}
-                    className="absolute w-2 h-2 rounded-full bg-primary-500"
+                    className="absolute w-2 h-2 rounded-full bg-primary-500 hidden md:block"
                     style={{
                       top: `${50 + Math.cos((i * Math.PI * 2) / 6) * 140}px`,
                       left: `${50 + Math.sin((i * Math.PI * 2) / 6) * 140}px`,
