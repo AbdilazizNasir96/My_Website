@@ -264,6 +264,7 @@ export default function About() {
                       left: '50%',
                       marginTop: '-6px',
                       marginLeft: '-6px',
+                      transformOrigin: `${Math.cos((i * Math.PI * 2) / 8) * 150}px ${Math.sin((i * Math.PI * 2) / 8) * 150}px`,
                     }}
                     animate={{
                       rotate: 360,
@@ -283,9 +284,6 @@ export default function About() {
                         delay: i * 0.125,
                       }
                     }}
-                    style={{
-                      transformOrigin: `${Math.cos((i * Math.PI * 2) / 8) * 150}px ${Math.sin((i * Math.PI * 2) / 8) * 150}px`,
-                    }}
                   />
                 ))}
 
@@ -299,6 +297,7 @@ export default function About() {
                       left: '50%',
                       marginTop: '-4px',
                       marginLeft: '-4px',
+                      transformOrigin: `${Math.cos((i * Math.PI * 2) / 4) * 140}px ${Math.sin((i * Math.PI * 2) / 4) * 140}px`,
                     }}
                     animate={{
                       rotate: 360,
@@ -317,9 +316,6 @@ export default function About() {
                         ease: "easeInOut",
                         delay: i * 0.375,
                       }
-                    }}
-                    style={{
-                      transformOrigin: `${Math.cos((i * Math.PI * 2) / 4) * 140}px ${Math.sin((i * Math.PI * 2) / 4) * 140}px`,
                     }}
                   />
                 ))}
