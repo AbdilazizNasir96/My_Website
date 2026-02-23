@@ -180,113 +180,213 @@ export default function About() {
             
             <div className="flex justify-center">
               <motion.div
-                initial={{ opacity: 0, scale: 0.8 }}
-                animate={storyInView ? { opacity: 1, scale: 1 } : {}}
-                transition={{ duration: 0.8, delay: 0.4 }}
-                className="relative group perspective-1000"
+                initial={{ opacity: 0, scale: 0.8, rotate: -180 }}
+                animate={storyInView ? { opacity: 1, scale: 1, rotate: 0 } : {}}
+                transition={{ duration: 1.2, delay: 0.4, type: "spring" }}
+                className="relative group"
               >
-                {/* Main Photo Container with 3D Tilt Effect */}
+                {/* Main Photo Container - Circular with 3D effect */}
                 <motion.div
                   whileHover={{ 
-                    scale: 1.05,
-                    rotateY: 5,
-                    rotateX: -5,
+                    scale: 1.1,
+                    rotate: [0, -5, 5, -5, 0],
                   }}
+                  whileTap={{ scale: 1.05 }}
                   transition={{ 
-                    type: "spring", 
-                    stiffness: 300, 
-                    damping: 20 
+                    scale: { type: "spring", stiffness: 200, damping: 15 },
+                    rotate: { duration: 0.5 }
                   }}
-                  className="relative w-64 h-64 rounded-full overflow-hidden border-4 border-primary-500/40 shadow-2xl shadow-primary-500/20"
-                  style={{
-                    transformStyle: 'preserve-3d',
-                  }}
+                  className="relative w-64 h-64 sm:w-72 sm:h-72 lg:w-80 lg:h-80 rounded-full overflow-hidden border-4 border-primary-500/50 shadow-2xl shadow-primary-500/40 group-hover:border-accent-orange/70 transition-all duration-500"
                 >
-                  {/* Image with Parallax Effect */}
+                  {/* Image with zoom */}
                   <motion.div
-                    whileHover={{ scale: 1.15 }}
-                    transition={{ duration: 0.6, ease: "easeOut" }}
+                    whileHover={{ scale: 1.2, rotate: 5 }}
+                    whileTap={{ scale: 1.15 }}
+                    transition={{ duration: 0.6 }}
                     className="relative w-full h-full"
                   >
                     <Image
-                      src="/Image/about.jpg"
+                      src="/Image/portofolio.png"
                       alt="About - Abdilaziz Nasir"
                       fill
                       className="object-cover"
-                      sizes="(max-width: 768px) 80vw, 256px"
+                      sizes="(max-width: 640px) 256px, (max-width: 1024px) 288px, 320px"
                       priority={false}
                     />
                   </motion.div>
                   
-                  {/* Animated Gradient Overlay */}
-                  <motion.div 
-                    className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent"
-                    whileHover={{ opacity: 0.3 }}
-                    transition={{ duration: 0.3 }}
-                  />
+                  {/* Gradient Overlay - Simplified for mobile */}
+                  <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent" />
                   
-                  {/* Shimmer Effect on Hover */}
+                  {/* Shimmer Effect - Single for better mobile performance */}
                   <motion.div
-                    className="absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent"
-                    initial={{ x: '-100%' }}
-                    whileHover={{ x: '100%' }}
-                    transition={{ duration: 0.8, ease: "easeInOut" }}
+                    className="absolute inset-0 bg-gradient-to-r from-transparent via-primary-500/30 to-transparent"
+                    animate={{ x: ['-100%', '100%'] }}
+                    transition={{ duration: 2, repeat: Infinity, ease: "easeInOut", repeatDelay: 1 }}
                   />
                 </motion.div>
 
-                {/* Rotating Border Ring 1 */}
+                {/* Fast Rotating Ring 1 */}
                 <motion.div
                   animate={{ rotate: 360 }}
-                  transition={{ duration: 20, repeat: Infinity, ease: "linear" }}
-                  className="absolute -inset-4 rounded-full border-2 border-dashed border-primary-500/30"
+                  transition={{ duration: 8, repeat: Infinity, ease: "linear" }}
+                  className="absolute -inset-4 rounded-full border-2 border-dashed border-primary-500/60 will-change-transform"
                 />
                 
-                {/* Counter-Rotating Border Ring 2 */}
+                {/* Counter Rotating Ring 2 - Faster */}
                 <motion.div
                   animate={{ rotate: -360 }}
-                  transition={{ duration: 15, repeat: Infinity, ease: "linear" }}
-                  className="absolute -inset-6 rounded-full border border-dotted border-accent-orange/20"
+                  transition={{ duration: 6, repeat: Infinity, ease: "linear" }}
+                  className="absolute -inset-6 rounded-full border-2 border-dotted border-accent-orange/50 will-change-transform"
                 />
 
-                {/* Pulsing Glow Ring */}
+                {/* Pulsing Ring - Simplified for mobile */}
                 <motion.div
                   animate={{ 
-                    scale: [1, 1.1, 1],
-                    opacity: [0.3, 0.6, 0.3]
+                    scale: [1, 1.3, 1],
+                    opacity: [0.4, 0.8, 0.4],
                   }}
                   transition={{ 
                     duration: 2, 
                     repeat: Infinity, 
                     ease: "easeInOut" 
                   }}
-                  className="absolute inset-0 rounded-full ring-4 ring-primary-500/20 blur-sm"
+                  className="absolute -inset-3 rounded-full border-4 border-primary-500/40 blur-sm will-change-transform"
                 />
 
-                {/* Floating Particles Around Photo - Desktop only */}
-                {Array.from({ length: 6 }).map((_, i) => (
+                {/* Spinning Dots - Desktop only (8 dots) */}
+                {Array.from({ length: 8 }).map((_, i) => (
                   <motion.div
                     key={i}
-                    className="absolute w-2 h-2 rounded-full bg-primary-500 hidden md:block"
+                    className="absolute w-3 h-3 rounded-full bg-primary-500 hidden sm:block will-change-transform"
                     style={{
-                      top: `${50 + Math.cos((i * Math.PI * 2) / 6) * 140}px`,
-                      left: `${50 + Math.sin((i * Math.PI * 2) / 6) * 140}px`,
+                      top: '50%',
+                      left: '50%',
+                      marginTop: '-6px',
+                      marginLeft: '-6px',
                     }}
                     animate={{
-                      y: [0, -15, 0],
-                      opacity: [0.3, 0.8, 0.3],
-                      scale: [1, 1.2, 1],
+                      rotate: 360,
+                      scale: [1, 1.5, 1],
                     }}
                     transition={{
-                      duration: 2 + i * 0.2,
-                      repeat: Infinity,
-                      delay: i * 0.3,
-                      ease: "easeInOut"
+                      rotate: {
+                        duration: 4,
+                        repeat: Infinity,
+                        ease: "linear",
+                        delay: i * 0.5,
+                      },
+                      scale: {
+                        duration: 1,
+                        repeat: Infinity,
+                        ease: "easeInOut",
+                        delay: i * 0.125,
+                      }
+                    }}
+                    style={{
+                      transformOrigin: `${Math.cos((i * Math.PI * 2) / 8) * 150}px ${Math.sin((i * Math.PI * 2) / 8) * 150}px`,
                     }}
                   />
                 ))}
 
-                {/* Hover Ring Effect */}
-                <div className="pointer-events-none absolute inset-0 rounded-full ring-0 group-hover:ring-8 ring-primary-500/10 transition-all duration-500" />
+                {/* Mobile-friendly dots - Only 4 dots on mobile */}
+                {Array.from({ length: 4 }).map((_, i) => (
+                  <motion.div
+                    key={`mobile-${i}`}
+                    className="absolute w-2 h-2 rounded-full bg-primary-500 sm:hidden will-change-transform"
+                    style={{
+                      top: '50%',
+                      left: '50%',
+                      marginTop: '-4px',
+                      marginLeft: '-4px',
+                    }}
+                    animate={{
+                      rotate: 360,
+                      scale: [1, 1.3, 1],
+                    }}
+                    transition={{
+                      rotate: {
+                        duration: 5,
+                        repeat: Infinity,
+                        ease: "linear",
+                        delay: i * 1.25,
+                      },
+                      scale: {
+                        duration: 1.5,
+                        repeat: Infinity,
+                        ease: "easeInOut",
+                        delay: i * 0.375,
+                      }
+                    }}
+                    style={{
+                      transformOrigin: `${Math.cos((i * Math.PI * 2) / 4) * 140}px ${Math.sin((i * Math.PI * 2) / 4) * 140}px`,
+                    }}
+                  />
+                ))}
+
+                {/* Orbiting Particles - Desktop only for performance */}
+                {Array.from({ length: 4 }).map((_, i) => (
+                  <motion.div
+                    key={`orbit-${i}`}
+                    className="absolute w-2 h-2 rounded-full hidden lg:block will-change-transform"
+                    style={{
+                      background: i % 2 === 0 ? '#3b82f6' : '#f97316',
+                      top: '50%',
+                      left: '50%',
+                    }}
+                    animate={{
+                      x: [
+                        Math.cos((i * Math.PI * 2) / 4) * 180,
+                        Math.cos(((i + 1) * Math.PI * 2) / 4) * 180,
+                        Math.cos(((i + 2) * Math.PI * 2) / 4) * 180,
+                        Math.cos(((i + 3) * Math.PI * 2) / 4) * 180,
+                        Math.cos((i * Math.PI * 2) / 4) * 180,
+                      ],
+                      y: [
+                        Math.sin((i * Math.PI * 2) / 4) * 180,
+                        Math.sin(((i + 1) * Math.PI * 2) / 4) * 180,
+                        Math.sin(((i + 2) * Math.PI * 2) / 4) * 180,
+                        Math.sin(((i + 3) * Math.PI * 2) / 4) * 180,
+                        Math.sin((i * Math.PI * 2) / 4) * 180,
+                      ],
+                      scale: [1, 1.5, 1, 1.5, 1],
+                    }}
+                    transition={{
+                      duration: 5,
+                      repeat: Infinity,
+                      ease: "linear",
+                      delay: i * 0.3,
+                    }}
+                  />
+                ))}
+
+                {/* Background Glow - Optimized */}
+                <motion.div
+                  animate={{ 
+                    scale: [1, 1.4, 1],
+                    opacity: [0.3, 0.7, 0.3],
+                  }}
+                  transition={{ 
+                    duration: 5, 
+                    repeat: Infinity, 
+                    ease: "easeInOut" 
+                  }}
+                  className="absolute -inset-12 bg-gradient-to-r from-primary-500/30 via-accent-orange/30 to-primary-500/30 rounded-full blur-3xl -z-10 will-change-transform"
+                />
+                
+                {/* Secondary Glow Layer - Desktop only */}
+                <motion.div
+                  animate={{ 
+                    scale: [1.2, 1, 1.2],
+                    opacity: [0.2, 0.5, 0.2],
+                  }}
+                  transition={{ 
+                    duration: 4, 
+                    repeat: Infinity, 
+                    ease: "easeInOut" 
+                  }}
+                  className="absolute -inset-16 bg-gradient-to-l from-accent-orange/20 via-primary-500/20 to-accent-orange/20 rounded-full blur-3xl -z-10 hidden sm:block will-change-transform"
+                />
               </motion.div>
             </div>
           </div>
